@@ -1,0 +1,28 @@
+#!/bin/bash
+
+export PIDFILE=PIDFILE HERE
+export KEYTAB=KERBEROS KEYTAB HERE
+export LABMAP=LABMAP.PL HERE
+
+case $1 in
+start)
+  if [ -e $PIDFILE ]
+    then
+      echo "Labmap already running."
+    else
+      k5start -b -f $KEYTAB -U -K 10 -c $PIDFILE $LABMAP -v
+  fi
+  ;;
+stop)
+  if [ -e $PIDFILE ]
+    then
+      kill -s SIGTERM `cat $PIDFILE`
+      rm $PIDFILE
+    else
+      echo "Labmap not running."
+  fi
+  ;;
+*)
+  echo 'usage: labmap_control (start|stop)'
+  ;;
+esac
